@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>User Page</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/alertify.min.js"></script>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/css/alertify.min.css"/>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/css/themes/default.min.css"/>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <style type="text/css">
+        body {
+            background-color: white;
+        }
+    	.container {
+            min-height: 1000px;
+            background-color: whitesmoke;
+            padding-top: 15px;
+            padding-bottom: 20px;
+            box-shadow: 0 -6px white, 0 6px white, 7px 0 4px -3px lightgray, -7px 0 4px -3px lightgray;
+        }
+        .jumbotron {
+            box-shadow: 0 6px 12px -6px black;
+            border-radius: 20px;
+            border: 1px solid lightgray;
+            padding: 2.5% 4%;
+        }
+        .btn-m {
+            font-size: 20px;
+        }
+        .card {
+            margin: 10px;
+            border-radius: 5px;
+            box-shadow: 0 6px 12px -8px black;
+            background-color: aliceblue;
+
+        }
+        .col-info {
+            background-color: white;
+            border-radius: 20px;
+            padding: 2%;
+            box-shadow: 0 -6px white, 0 2px 4px 3px lightgray, 7px 0 4px -3px lightgray, -7px 0 4px -3px lightgray;
+            min-height: 800px;
+        }
+    	
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="navbar-collapse w-100 order-1 order-md-0 dual-collapse2">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="navbar-brand" href="/index">EVoting</a>
+            </li>
+        </ul>
+    </div>
+    <div class="navbar-collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+
+                <a href="javascript: document.logoutForm.submit()" role="menuitem" class="nav-link"> Logout</a>
+                <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+                    <input hidden type="submit" value="Sign Out"/>
+                </form>
+
+            </li>
+        </ul>
+    </div>
+</nav>
+
+    <div class="container">
+        <div class="jumbotron">
+            <h5> Welcome, <span th:text="${name}">user</span> </h5>
+            <hr class="my-4">
+            <div class="row">
+                <div class="col-md-6 col">
+                    <p class="lead">
+                        Looking to start an election? <br/>
+                        <button class="btn btn-primary btn-m createBtn" type="button" data-toggle="createModal">Create an Election</button>
+                    </p>
+                </div>
+                <div class="col-md-6 col">
+                    <p class="lead">
+                        Have a code? <br/>
+                        <button class="btn btn-primary btn-m joinBtn" type="button" data-toggle="joinModal">Join an Election</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Create-->
+        <div class="modal fade createModal" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create an Election</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body create-body">
+
+                        <form id="createForm" class="form-group">
+                            <p>Election name:<input type="text" class="form-control" placeholder="Enter name..." name="electionTitle" required></p>
+                            <hr class="my-4">
+                            <p>Candidate:<input type="text" class="form-control" placeholder="Enter name..." name="candidate" required></p>
+                            <p>Candidate:<input type="text" class="form-control" placeholder="Enter name..." name="candidate" required></p>
+                            <p><button class="btn btn-secondary btnAddCandidate" id="btnAddCandidate" type="button">Add Candidate</button></p>
+                        </form>
+
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary btnSubmitCreate" form="createForm">Create Election</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Join-->
+        <div class="modal fade joinModal" id="joinModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="">Join an Election</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body join-body">
+
+                        <form id="joinForm" class="form-group">
+                            <p>Election code:<input type="text" class="form-control" placeholder="Enter code..." name="joinCode" required></p>
+                        </form>
+
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" form="joinForm">Join Election</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 col col-m">
+                <div class="col-info">
+                    <h5 style="text-align: center;">Your elections</h5>
+                    <hr class="my-4">
+
+                    <p style="text-align: center; font-size: 18px" th:if="${ownEmpty != null}" th:text="${ownEmpty}"></p>
+
+                    <div class="card" th:each="oElec : ${owned}">
+                        <div class="card-body">
+                            <h5 class="card-title"> <span th:text="${oElec.key.title}" class="ownTitle">title</span> </h5>
+                            <p class="card-text" th:text="${oElec.key.code}">
+                                With supporting text below as a natural lead-in to additional content.
+                            </p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <a href="" class="btn btn-secondary btn-s electionBtn" th:id="${oElec.key.eid}">Go to Election</a>
+                                </div>
+                                <div class="col-md-6" style="text-align: right">
+                                    <a th:if="${oElec.value == false}" href="" class="btn btn-secondary btn-s voteBtn" th:id="${oElec.key.eid}">Vote</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-6 col col-m">
+                <div class="col-info">
+                    <h5 style="text-align: center;">Elections you've joined</h5>
+                    <hr class="my-4">
+
+                    <p style="text-align: center; font-size: 18px" th:if="${joinEmpty != null}" th:text="${joinEmpty}"></p>
+
+                    <div class="card" th:each="jElec : ${joined}">
+                        <div class="card-body">
+                            <h5 class="card-title"> <span th:text="${jElec.key.title}" class="joinTitle">title</span> </h5>
+                            <p class="card-text" th:text="${jElec.key.code}">
+                                With supporting text below as a natural lead-in to additional content.
+                            </p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <a href="#" class="btn btn-secondary btn-s electionBtn" th:id="${jElec.key.eid}">Go to Election</a>
+                                </div>
+                                <div class="col-md-6" style="text-align: right">
+                                    <a th:if="${jElec.value == false}" href="" class="btn btn-secondary btn-s voteBtn" th:id="${jElec.key.eid}">Vote</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+       /* var create = function(event) {
+            event.preventDefault();
+            var request = new XMLHttpRequest();
+            var form = document.getElementById("createForm");
+            var formData = new FormData(form);
+
+            request.onreadystatechange = function (ev) {
+                if(request.readyState === 4 && request.status === 200) {
+                    alertify.success("Election Created");
+                    location.reload();
+                }
+            };
+            request.open("POST", "/create");
+            request.send(formData);
+        };
+
+        var join = function(event) {
+            event.preventDefault();
+            var request = new XMLHttpRequest();
+            var form = document.getElementById("joinForm");
+            var formData = new FormData(form);
+
+            request.onreadystatechange = function (ev) {
+                if(request.readyState === 4 && request.status === 200) {
+                    alertify.success("Election Joined");
+                    location.reload();
+                }
+            };
+            request.open("POST", "/join");
+            request.send(formData);
+        }; */
+
+        // when DOM is ready
+        $(document).ready(function () {
+
+            $('#createForm').submit(function (event) {
+                event.preventDefault();
+                var form = $(this);
+                $.ajax({
+                   type: 'post',
+                   url: '/create',
+                   data: form.serialize(),
+                   success: function (data) {
+                       console.log("created");
+                       location.reload();
+                   }
+                });
+            });
+
+            $('#joinForm').submit(function (event) {
+                event.preventDefault();
+                var form = $(this);
+                $.ajax({
+                    type: 'post',
+                    url: '/join',
+                    data: form.serialize(),
+                    success: function (data) {
+                        console.log("joined");
+                        location.reload();
+                    }
+                });
+            });
+
+            $(".voteBtn").click(function(event){
+               event.preventDefault();
+               var id = this.id;
+                $.ajax({
+                    type: 'get',
+                    url: "/election/" + id + "/vote",
+                    data: {eid: id},
+                    success: function (data) {
+                        window.location.href = "/election/" + id + "/vote";
+                    }
+                });
+            });
+
+            $(".electionBtn").click(function(event) {
+                event.preventDefault();
+                var id = this.id;
+                $.ajax({
+                    type: 'get',
+                    url: "/election/" + id,
+                    data: {eid: id},
+                    success:function (data) {
+                        console.log(data);
+                        window.location.href = "election/" +id;
+                    }
+                });
+            });
+
+            // Attach Button click event listener for create btn/modal
+            $(".createBtn").click(function(){
+                // show Modal
+                $('#createModal').modal('show');
+                //add candidates on btn click
+                $(".btnAddCandidate").click(function() {
+                    newCand = jQuery("<p>Candidate:<input type='text' class='form-control' placeholder='Enter name...' name='candidate'></p>\n");
+                    $(newCand).insertBefore(".btnAddCandidate");
+                });
+
+            });
+
+            //reset modal on close
+            $(".createModal").on("hidden.bs.modal", function(){
+                $(".create-body").html("<form id=\"createForm\" class=\"form-group\">\n" +
+                        "                   <p>Election name:<input type=\"text\" class=\"form-control\" placeholder=\"Enter name...\" name=\"electionTitle\" required></p>\n" +
+                        "                   <hr class=\"my-4\">\n" +
+                        "                   <p>Candidate:<input type=\"text\" class=\"form-control\" placeholder=\"Enter name...\" name=\"candidate\" required></p>\n" +
+                        "                   <p>Candidate:<input type=\"text\" class=\"form-control\" placeholder=\"Enter name...\" name=\"candidate\" required></p>\n" +
+                        "                   <p><button class=\"btn btn-secondary btnAddCandidate\" id=\"btnAddCandidate\" type=\"button\">Add Candidate</button></p>\n" +
+                    "                   </form>");
+            });
+
+            // Attach Button click event listener for join btn/modal
+            $(".joinBtn").click(function(){
+                // show Modal
+                $('#joinModal').modal('show');
+            });
+
+            //reset modal on close
+            $(".joinModal").on("hidden.bs.modal", function() {
+               $(".join-body").html("<form id=\"joinForm\" class=\"form-group\">\n" +
+                   "                            <p>Election code:<input type=\"text\" class=\"form-control\" placeholder=\"Enter code...\" name=\"joinCode\" required></p>\n" +
+                   "                        </form>")
+            });
+
+        });
+    </script>
+</body>
+</html>

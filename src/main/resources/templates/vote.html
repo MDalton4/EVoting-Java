@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Vote</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            background-color: white;
+        }
+        .container {
+            min-height: 1000px;
+            background-color: whitesmoke;
+            padding-top: 25px;
+            padding-bottom: 20px;
+            box-shadow: 0 -6px white, 0 6px white, 7px 0 4px -3px lightgray, -7px 0 4px -3px lightgray;
+        }
+        .ballotContainer {
+            text-align: center;
+            padding: 15px;
+            margin: auto;
+            background-color: white;
+            width: 50%;
+            min-height: 200px;
+            border-radius: 20px;
+            box-shadow: 0 -6px white, 0 2px 4px 3px lightgray, 7px 0 4px -3px lightgray, -7px 0 4px -3px lightgray;
+        }
+        .btnContainer {
+            text-align: center;
+            padding-top: 10px;
+        }
+        .btnContainer button {
+            padding: 15px;
+            margin: 5px 75px;
+        }
+
+        .form-radio {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            display: inline-block;
+            position: relative;
+            background-color: #f1f1f1;
+            color: #666;
+            top: 10px;
+            height: 30px;
+            width: 30px;
+            border: 0;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-right: 7px;
+            outline: none;
+        }
+        .form-radio:checked::before {
+            position: absolute;
+            font: 13px/1 'Open Sans', sans-serif;
+            left: 11px;
+            top: 7px;
+            content: '\02143';
+            transform: rotate(40deg);
+        }
+        .form-radio:hover {
+            background-color: #f7f7f7;
+        }
+        .form-radio:checked {
+            background-color: #f1f1f1;
+        }
+        label {
+            color: #333;
+            font-size: 18px;
+        }
+        .verifyContainer {
+            text-align: center;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="navbar-collapse w-100 order-1 order-md-0 dual-collapse2">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="navbar-brand" href="/index">EVoting</a>
+            </li>
+        </ul>
+    </div>
+    <div class="navbar-collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+
+                <a href="javascript: document.logoutForm.submit()" role="menuitem" class="nav-link"> Logout</a>
+                <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+                    <input hidden type="submit" value="Sign Out"/>
+                </form>
+
+            </li>
+        </ul>
+    </div>
+</nav>
+
+    <div class="container">
+        <div class="ballotContainer">
+            <h4 th:text="${electionTitle}">Election Name</h4>
+            <form id="ballotForm">
+                <th:block th:each="cand : ${candidates}">
+                    <input type="radio" name="candidate" th:id="${cand}" class="form-radio"><label th:text="${cand}">cand</label><br>
+                </th:block>
+            </form>
+        </div>
+        <div class="btnContainer">
+            <button th:id="${eid}" class="btn btn-secondary verifyBtn">Verify Encryption</button>
+            <button th:id="${eid}" class="btn btn-primary castBtn">Cast Vote</button>
+        </div>
+        <hr class="my-4">
+        <div class="verifyContainer">
+
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+
+            $(".castBtn").click(function (event) {
+                event.preventDefault();
+                var id = this.id;
+                var selection = $('input[type=radio][name=candidate]:checked').attr('id');
+                if(selection != null) {
+                    console.log(selection);
+                    $.ajax({
+                        type: 'get',
+                        url: "/election/" + id + "/vote/cast",
+                        data: {eid: id, choice: selection},
+                        success: function (data) {
+                            window.location.href = "/election/" + id;
+                        }
+                    });
+                } else {
+                    alert("Must Select a candidate");
+                }
+            });
+
+            $(".verifyBtn").click(function (event) {
+                event.preventDefault();
+                var id = this.id;
+                var selection = $('input[type=radio][name=candidate]:checked').attr('id');
+                if(selection != null) {
+                    $.ajax({
+                        type: 'get',
+                        url: "/election/" + id + "/vote/verify",
+                        data: {eid: id, choice: selection},
+                        success: function (data) {
+                            console.log(data);
+                            var html = "<p>Encrypted Vote: " + data.encryption + "</p>";
+                            html += "<p>Public Key n: " + data.n + "</p>";
+                            html += "<p>Public Key nsqr: " + data.nsqr + "</p>";
+                            html += "<p>Public Key g: " + data.g + "</p>";
+                            html += "<p>Random used: " + data.rand + "</p>";
+                            html += "<p>Decryption of index: " + data.dec + "</p>";
+                            $(".verifyContainer").append(html);
+                            //window.location.href = "/election/" + id + "/vote";
+                        }
+                    });
+                } else {
+                    alert("Must Select a candidate");
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>

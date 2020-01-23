@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Election Proof</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/alertify.min.js"></script>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/css/alertify.min.css"/>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/css/themes/default.min.css"/>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            background-color: white;
+        }
+        .container {
+            min-height: 1000px;
+            background-color: whitesmoke;
+            padding-top: 15px;
+            padding-bottom: 20px;
+            box-shadow: 0 -6px white, 0 6px white, 7px 0 4px -3px lightgray, -7px 0 4px -3px lightgray;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <div class="navbar-collapse w-100 order-1 order-md-0 dual-collapse2">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="navbar-brand" href="/index">EVoting</a>
+            </li>
+        </ul>
+    </div>
+    <div class="navbar-collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+
+                <a href="javascript: document.logoutForm.submit()" role="menuitem" class="nav-link"> Logout</a>
+                <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+                    <input hidden type="submit" value="Sign Out"/>
+                </form>
+
+            </li>
+        </ul>
+    </div>
+    </nav>
+
+    <div class="container" th:id="${eid}">
+
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            var id = $('.container').attr('id');
+            $.ajax({
+                type: 'get',
+                url: "/election/" + id + "/outputProof",
+                data: {eid : id},
+                success: function(data){
+                    console.log(data);
+                    var count = 1;
+                    Object.keys(data).forEach(function (k) {
+                        var strings = data[k].split(".");
+                        $('.container').append("<p>Mix" + count + ": </p>");
+                        count++;
+                        for(var i=0;i <strings.length; i++) {
+                            $('.container').append("<p> "+ strings[i]  + " </p>");
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
